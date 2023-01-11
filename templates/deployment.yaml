@@ -1,0 +1,41 @@
+apiVersion: apps/v1 
+kind: Deployment
+metadata:
+  labels:
+    app.name: {{ .Values.app.name }}
+  name: {{ .Values.app.name }}
+spec:
+  replicas: {{ .Values.app.replicaCount }}
+  selector:
+    matchLabels:
+      app.name: {{ .Values.app.name }}
+  template:
+    metadata:
+      labels:
+        app.name: {{ .Values.app.name }}
+    spec:
+      containers:
+      # - image: pwstaging/demo-crm:latest
+      - image: gcr.io/samuel-ofori-demo-cr/democrm:latest
+        name: {{ .Values.app.name }}
+        ports:
+        - containerPort: 3000
+        env:
+        - name: MONGODB_URI
+          value: "mongodb://$(MONGO_INITDB_ROOT_USERNAME):$(MONGO_INITDB_ROOT_PASSWORD)@mongodb-headless.default.svc.cluster.local:27017/$(MONGO_DATABASE)"
+        resources:
+          limits: 
+            memory: 512Mi
+            cpu: "1"
+          requests:
+            memory: 256Mi
+            cpu: "0.2"
+        envFrom:
+        - configMapRef:
+            name: db-config
+        - secretRef:
+            name: mongo-secret
+
+
+            
+          

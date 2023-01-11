@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: db-config
+data:
+    MONGO_DATABASE: {{ .Values.mongodb.auth.database }}
+    LOG_LEVEL: {{ .Values.mongodb.logLevel | quote }}
+    PERSISTENCE: {{ .Values.mongodb.persistence.enabled | quote }}

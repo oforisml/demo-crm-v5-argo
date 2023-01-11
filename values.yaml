@@ -1,0 +1,77 @@
+# Worla said clear ni nyinaa
+
+global: 
+  namespace: default
+  email: oforisml.business@gmail.com
+
+app:
+  name: democrm-manual-charts
+  replicaCount: 2
+  service:
+    name: democrm-service-manual
+  
+
+
+# mongodb is the database 
+mongodb:
+  enabled: true
+  fullnameOverride: mongodb
+  replicaCount: 3
+  architecture: replicaset
+  useStatefulSet: true
+  auth:
+    enabled: true
+    rootUser: root
+    rootPassword: "f4k2la09."
+    username: "mongoServiceusername"
+    password: "0f0r1smL.comand"
+    database: "samdb"  
+    replicaSetKey: ""
+    existingSecret: ""
+    MONGO_INITDB_ROOT_USERNAME: bW9uZ29TZXJ2aWNldXNlcm5hbWU=
+    MONGO_INITDB_ROOT_PASSWORD: MGYwcjFzbUwuY29tYW5k
+  persistence:
+    enabled: true
+    medium: ""
+    existingClaim: ""
+    resourcePolicy: ""
+    storageClass: ""
+    accessModes:
+      - ReadWriteOnce
+    size: 2Gi
+    annotations: {}
+    mountPath: /data/db
+    subPath: ""
+    volumeClaimTemplates:
+      selector: {}
+      requests: {}
+      dataSource: {}
+  logLevel: "info"
+  
+
+ingressNginx:
+  enabled: true
+  name:  democrm-ingress-manual
+  hostName: cyclonea0.zapto.org
+  secretName: cyclonea0-zapto-org
+  path: /
+  pathType: Prefix
+
+
+cert-manager: 
+  enabled: true
+  installCRDs: true
+  
+  
+
+cronJob:
+  enabled: true
+  name: mongo-users-purge
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  schedule: "@daily"
+  secret:
+    name: cron-secret
+  MONGO_DATABASE: c2FtZGI=
+  MONGODB_ROOT_PASSWORD: ZjRrMmxhMDku
+  

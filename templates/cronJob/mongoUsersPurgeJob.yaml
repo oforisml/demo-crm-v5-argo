@@ -1,0 +1,49 @@
+{{ if .Values.cronJob.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Values.cronJob.name }}
+  namespace: {{ .Values.global.namepace }}
+spec:
+  # schedule: "@daily"
+  schedule: {{ .Values.cronJob.schedule | quote }}
+  successfulJobsHistoryLimit: {{ .Values.cronJob.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ .Values.cronJob.failedJobsHistoryLimit }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: "OnFailure"
+          # Next 2 lines needed when file creation is involved
+          securityContext:
+            fsGroup: 1001   # grant permission to create file(s) in container
+          containers:
+            - name: mongo-user-purge
+              image: docker.io/bitnami/mongodb:6.0.3-debian-11-r9
+              imagePullPolicy: "IfNotPresent"
+              command: 
+                - mongosh 
+                - $(MONGO_DATABASE) 
+                - --host 
+                - mongodb-headless
+                - --authenticationDatabase 
+                - admin 
+                - -u 
+                - root 
+                - -p 
+                - $(MONGODB_ROOT_PASSWORD) 
+                - --eval 
+                - db.dropDatabase() 
+              envFrom:
+              - secretRef:
+                  name: {{ .Values.cronJob.secret.name }}
+
+{{ end }}
+
+
+
+
+
+              
+              
+          

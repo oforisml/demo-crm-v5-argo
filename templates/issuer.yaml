@@ -1,0 +1,22 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-production-manual-charts
+  annotations:
+    # This is what defines this resource as a hook. Without this line, the
+    # job is considered part of the release.
+    "helm.sh/hook": post-install
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded
+  namepace: {{ .Values.global.namespace | quote }}
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: {{ .Values.global.email }}
+    privateKeySecretRef:
+      name: letsencrypt-production-manual-charts
+    solvers:
+      - selector: {} 
+        http01:
+          ingress:
+            class: nginx
